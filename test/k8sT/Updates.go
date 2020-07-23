@@ -142,6 +142,9 @@ func InstallAndValidateCiliumUpgrades(kubectl *helpers.Kubectl, oldHelmChartVers
 	var (
 		privateIface string // only used when running w/o kube-proxy
 		err          error
+		netCatEC     int
+		apps         = []string{helpers.App1, helpers.App2, helpers.App3}
+		app1Service  = "app1-service"
 	)
 
 	canRun, err := helpers.CanRunK8sVersion(oldImageVersion, helpers.GetCurrentK8SEnv())
@@ -159,9 +162,6 @@ func InstallAndValidateCiliumUpgrades(kubectl *helpers.Kubectl, oldHelmChartVers
 		privateIface, err = kubectl.GetPrivateIface()
 		ExpectWithOffset(1, err).To(BeNil(), "Unable to determine private iface")
 	}
-
-	apps := []string{helpers.App1, helpers.App2, helpers.App3}
-	app1Service := "app1-service"
 
 	cleanupCiliumState := func(helmPath, chartVersion, imageName, imageTag, registry string) {
 		removeCilium(kubectl)
@@ -228,6 +228,20 @@ func InstallAndValidateCiliumUpgrades(kubectl *helpers.Kubectl, oldHelmChartVers
 
 		// make sure we clean everything up before doing any other test
 		cleanupCiliumState(filepath.Join(kubectl.BasePath(), helpers.HelmTemplate), newHelmChartVersion, "", newImageVersion, "")
+	}
+
+	persistentConnectionFunc := func() {
+		appPods := helpers.GetAppPods(apps, helpers.DefaultNamespace, kubectl, "id")
+		pod, ok := appPods[helpers.App2]
+		if !ok {
+			netCatEC = 254
+			log.Errorf("pod for %q app not found", helpers.App2)
+			return
+		}
+		res := kubectl.ExecPodCmd(
+			helpers.DefaultNamespace, pod,
+			helpers.NetcatNoTimeout(app1Service))
+		netCatEC = res.GetExitCode()
 	}
 
 	testfunc := func() {
@@ -514,6 +528,7 @@ func InstallAndValidateCiliumUpgrades(kubectl *helpers.Kubectl, oldHelmChartVers
 		ExpectCiliumReady(kubectl)
 		ExpectCiliumOperatorReady(kubectl)
 
+		go persistentConnectionFunc()
 		validateEndpointsConnection()
 		checkNoInteruptsInSVCFlows()
 
@@ -546,6 +561,8 @@ func InstallAndValidateCiliumUpgrades(kubectl *helpers.Kubectl, oldHelmChartVers
 		nbMissedTailCalls, err = kubectl.CountMissedTailCalls()
 		ExpectWithOffset(1, err).Should(BeNil(), "Failed to retrieve number of missed tail calls")
 		ExpectWithOffset(1, nbMissedTailCalls).To(BeNumerically("==", 0))
+
+		Expect(netCatEC).Should(Equal(0), "tcp connection died in reload")
 	}
 	return testfunc, cleanupCallback
 }

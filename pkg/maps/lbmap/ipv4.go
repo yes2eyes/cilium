@@ -189,6 +189,7 @@ func (k *Service4Key) SetScope(scope uint8)      { k.Scope = scope }
 func (k *Service4Key) GetScope() uint8           { return k.Scope }
 func (k *Service4Key) GetAddress() net.IP        { return k.Address.IP() }
 func (k *Service4Key) GetPort() uint16           { return k.Port }
+func (k *Service4Key) GetProtocol() uint8        { return k.Proto }
 func (k *Service4Key) MapDelete() error          { return k.Map().Delete(k.ToNetwork()) }
 
 func (k *Service4Key) RevNatValue() RevNatValue {
@@ -313,6 +314,7 @@ func (v *Backend4Value) GetValuePtr() unsafe.Pointer { return unsafe.Pointer(v) 
 
 func (b *Backend4Value) GetAddress() net.IP { return b.Address.IP() }
 func (b *Backend4Value) GetPort() uint16    { return b.Port }
+func (b *Backend4Value) GetProtocol() uint8 { return uint8(b.Proto) }
 
 func (v *Backend4Value) ToNetwork() BackendValue {
 	n := *v
