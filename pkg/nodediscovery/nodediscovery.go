@@ -226,6 +226,8 @@ func (n *NodeDiscovery) UpdateCiliumNodeResource() {
 		return
 	}
 
+	log.WithField("node", nodeTypes.GetName()).Info("Creating or updating CiliumNode resource")
+
 	ciliumClient := k8s.CiliumClient()
 
 	for retryCount := 0; retryCount < maxRetryCount; retryCount++ {
