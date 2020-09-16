@@ -856,6 +856,9 @@ func init() {
 	flags.String(option.K8sServiceProxyName, "", "Value of K8s service-proxy-name label for which Cilium handles the services (empty = all services without service.kubernetes.io/service-proxy-name label)")
 	option.BindEnv(option.K8sServiceProxyName)
 
+	flags.Bool(option.EnableCustomCallsName, false, "Enable tail call hooks for custom eBPF programs")
+	option.BindEnv(option.EnableCustomCallsName)
+
 	viper.BindPFlags(flags)
 
 	CustomCommandHelpFormat(RootCmd, option.HelpFlagSections)
