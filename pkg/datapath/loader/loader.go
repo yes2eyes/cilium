@@ -478,3 +478,9 @@ func (l *Loader) EndpointHash(cfg datapath.EndpointConfiguration) (string, error
 func (l *Loader) CallsMapPath(id uint16) string {
 	return bpf.LocalMapPath(callsmap.MapName, id)
 }
+
+// CustomCallsMapPath gets the BPF Custom Calls Map for the endpoint with the
+// specified ID.
+func (l *Loader) CustomCallsMapPath(id uint16) string {
+	return bpf.LocalMapPath(callsmap.CustomCallsMapName, id)
+}

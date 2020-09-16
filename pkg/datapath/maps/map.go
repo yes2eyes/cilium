@@ -103,6 +103,7 @@ func (ms *MapSweeper) walk(path string, _ os.FileInfo, _ error) error {
 		ctmap.MapNameAny6,
 		ctmap.MapNameAny4,
 		callsmap.MapName,
+		callsmap.CustomCallsMapName,
 		endpoint.IpvlanMapName,
 	}
 

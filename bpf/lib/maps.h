@@ -99,6 +99,25 @@ struct bpf_elf_map __section_maps TUNNEL_MAP = {
 
 #endif
 
+#if (defined CUSTOM_CALLS_MAP)
+/* Private per-EP map for tail calls to user-defined programs.
+ * CUSTOM_CALLS_MAP is a per-EP map name, only defined for programs that need
+ * to use the map, so we do not want to compile this definition if
+ * CUSTOM_CALLS_MAP has not been #define-d.
+ */
+struct bpf_elf_map __section_maps CUSTOM_CALLS_MAP = {
+	.type		= BPF_MAP_TYPE_PROG_ARRAY,
+	.id		= CILIUM_MAP_CUSTOM_CALLS,
+	.size_key	= sizeof(__u32),
+	.size_value	= sizeof(__u32),
+	.pinning	= PIN_GLOBAL_NS,
+	.max_elem	= 2,	/* ingress and egress */
+};
+
+#define CUSTOM_CALLS_IDX_INGRESS	0
+#define CUSTOM_CALLS_IDX_EGRESS		1
+#endif /* ENABLE_CUSTOM_CALLS && CUSTOM_CALLS_MAP */
+
 #ifdef HAVE_LPM_TRIE_MAP_TYPE
 #define LPM_MAP_TYPE BPF_MAP_TYPE_LPM_TRIE
 #else

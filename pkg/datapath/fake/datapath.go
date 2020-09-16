@@ -127,6 +127,10 @@ func (f *fakeLoader) CallsMapPath(id uint16) string {
 	return ""
 }
 
+func (f *fakeLoader) CustomCallsMapPath(id uint16) string {
+	return ""
+}
+
 // Reinitialize does nothing.
 func (f *fakeLoader) Reinitialize(ctx context.Context, o datapath.BaseProgramOwner, deviceMTU int, iptMgr datapath.IptablesManager, p datapath.Proxy) error {
 	return nil

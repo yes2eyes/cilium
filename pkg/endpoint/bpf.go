@@ -64,6 +64,12 @@ func (e *Endpoint) callsMapPath() string {
 	return e.owner.Datapath().Loader().CallsMapPath(e.ID)
 }
 
+// callsCustomMapPath returns the path to cilium custom tail calls map of an
+// endpoint.
+func (e *Endpoint) customCallsMapPath() string {
+	return e.owner.Datapath().Loader().CustomCallsMapPath(e.ID)
+}
+
 // BPFIpvlanMapPath returns the path to the ipvlan tail call map of an endpoint.
 func (e *Endpoint) BPFIpvlanMapPath() string {
 	return bpf.LocalMapPath(IpvlanMapName, e.ID)
@@ -934,6 +940,7 @@ func (e *Endpoint) deleteMaps() []error {
 	maps := map[string]string{
 		"policy": e.policyMapPath(),
 		"calls":  e.callsMapPath(),
+		"custom": e.customCallsMapPath(),
 		"egress": e.BPFIpvlanMapPath(),
 	}
 	for name, path := range maps {

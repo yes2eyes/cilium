@@ -756,6 +756,9 @@ int tail_handle_ipv4(struct __ctx_buff *ctx)
 		return send_drop_notify(ctx, SECLABEL, dstID, 0, ret,
 					CTX_ACT_DROP, METRIC_EGRESS);
 
+	ctx_store_meta(ctx, CB_CUSTOM_CALLS, ret);
+	tail_call_static(ctx, &CUSTOM_CALLS_MAP, CUSTOM_CALLS_IDX_EGRESS);
+
 	return ret;
 }
 
@@ -1243,6 +1246,10 @@ int tail_ipv4_policy(struct __ctx_buff *ctx)
 
 	/* Store meta: essential for proxy ingress, see bpf_host.c */
 	ctx_store_meta(ctx, CB_PROXY_MAGIC, ctx->mark);
+
+	ctx_store_meta(ctx, CB_CUSTOM_CALLS, ret);
+	tail_call_static(ctx, &CUSTOM_CALLS_MAP, CUSTOM_CALLS_IDX_INGRESS);
+
 	return ret;
 }
 

@@ -46,6 +46,7 @@ var (
 	elfMapPrefixes = []string{
 		policymap.MapName,
 		callsmap.MapName,
+		callsmap.CustomCallsMapName,
 	}
 	elfCtMapPrefixes = []string{
 		ctmap.MapNameTCP4,
