@@ -5,7 +5,7 @@ include ../Makefile.defs
 
 .PHONY: all build_all subdirs install clean
 
-SUBDIRS = sockops
+SUBDIRS = sockops custom
 
 BPF_SIMPLE = bpf_network.o bpf_alignchecker.o
 BPF = bpf_lxc.o bpf_overlay.o bpf_sock.o bpf_host.o bpf_xdp.o $(BPF_SIMPLE)
