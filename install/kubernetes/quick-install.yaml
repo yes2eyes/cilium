@@ -622,8 +622,8 @@ spec:
               key: debug
               name: cilium-config
               optional: true
-        image: "docker.io/cilium/operator-generic:latest"
-        imagePullPolicy: Always
+        image: "docker.io/cilium/operator-generic:testing"
+        imagePullPolicy: IfNotPresent
         name: cilium-operator
         livenessProbe:
           httpGet:
