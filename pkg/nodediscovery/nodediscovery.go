@@ -62,7 +62,7 @@ type NodeDiscovery struct {
 	Manager     *nodemanager.Manager
 	LocalConfig datapath.LocalNodeConfiguration
 	Registrar   nodestore.NodeRegistrar
-	LocalNode   nodeTypes.Node
+	LocalNode   nodeTypes.RegisterNode
 	Registered  chan struct{}
 	NetConf     *cnitypes.NetConf
 }
@@ -116,8 +116,10 @@ func NewNodeDiscovery(manager *nodemanager.Manager, mtuConfig mtu.Configuration,
 			IPv4PodSubnets:          option.Config.IPv4PodSubnets,
 			IPv6PodSubnets:          option.Config.IPv6PodSubnets,
 		},
-		LocalNode: nodeTypes.Node{
-			Source: source.Local,
+		LocalNode: nodeTypes.RegisterNode{
+			Node: nodeTypes.Node{
+				Source: source.Local,
+			},
 		},
 		Registered: make(chan struct{}),
 		NetConf:    netConf,
@@ -165,7 +167,7 @@ func (n *NodeDiscovery) StartDiscovery(nodeName string) {
 		})
 	}
 
-	n.Manager.NodeUpdated(n.LocalNode)
+	n.Manager.NodeUpdated(n.LocalNode.Node)
 
 	go func() {
 		log.WithFields(
