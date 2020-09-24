@@ -104,7 +104,7 @@ pipeline {
 
         stage('BDD-tests'){
             options {
-                timeout(time: 90, unit: 'MINUTES')
+                timeout(time: 360, unit: 'MINUTES')
             }
 
             steps {
